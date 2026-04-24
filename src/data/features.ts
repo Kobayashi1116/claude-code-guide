@@ -1,101 +1,133 @@
 import { LucideIcon, Code2, FolderOpen, Terminal, GitBranch, Globe, Layers, Plug, Workflow } from 'lucide-react'
 
+export interface TerminalMessage {
+  type: 'input' | 'output' | 'action' | 'success' | 'divider'
+  text: string
+}
+
 export interface Feature {
   icon: LucideIcon
+  emoji: string
   title: string
-  description: string
-  examples: string[]
+  plain: string
+  scene: string
+  demo: TerminalMessage[]
   badge?: string
 }
 
 export const features: Feature[] = [
   {
     icon: Code2,
-    title: 'コード生成・編集・リファクタリング',
-    description: '自然言語の指示でコードを生成し、既存コードの編集やリファクタリングを行います。バグ修正、テスト追加、型定義の整備など多様なコーディングタスクに対応します。',
-    examples: [
-      'Reactコンポーネントを新規作成して',
-      'この関数をTypeScriptに書き直して',
-      'パフォーマンスを改善するためにリファクタリングして',
-      'このバグを修正して単体テストも追加して',
+    emoji: '✍️',
+    title: 'コードを書く・直す・整理する',
+    plain: 'コードを書いてもらったり、バグを直してもらったりできます。「リファクタリング」とは、プログラムの動きを変えずに、コードを読みやすく整理すること。Claude Codeに任せれば、テストを追加したり、型定義を整えたり、複雑な修正もやってくれます。',
+    scene: '深夜2時、本番でバグが出た。エラーメッセージをそのままClaudeに貼り付けると、原因を特定してその場で修正してくれる。',
+    demo: [
+      { type: 'input', text: 'ログインボタンを押すと画面が真っ白になる。直して' },
+      { type: 'action', text: 'src/pages/Login.tsx を読み込んでいます...' },
+      { type: 'action', text: 'エラーの原因を調査しています...' },
+      { type: 'output', text: '原因がわかりました。useEffect の依存配列が抜けていて無限ループになっています。修正します。' },
+      { type: 'success', text: 'src/pages/Login.tsx を修正しました' },
+      { type: 'success', text: 'テストを実行しました（3件すべて通過）' },
     ],
-    badge: '最も使用頻度が高い',
+    badge: 'よく使われる',
   },
   {
     icon: FolderOpen,
-    title: 'ファイル操作',
-    description: 'ファイルの読み書き、検索、移動、削除などのファイルシステム操作が可能です。プロジェクト全体にわたる変更も一括で実行できます。',
-    examples: [
-      'src/以下のすべての.tsxファイルを一覧表示して',
-      '古いコンポーネントを新しいディレクトリに移動して',
-      'console.logが含まれるファイルを全部見つけて',
-      '設定ファイルを新しいフォーマットに更新して',
+    emoji: '📁',
+    title: 'ファイルをまとめて変更する',
+    plain: 'プロジェクト内の複数ファイルを同時に読んで、変更してくれます。「このコンポーネントの名前を全部変えたい」「古いAPIを新しいものに置き換えたい」といった、ファイルをまたぐ作業が得意です。',
+    scene: '商品名が変わったので「OldButton」という名前を「PrimaryButton」に全ファイルで変更したい。手動でやると1時間かかる作業が、Claudeなら数秒で終わる。',
+    demo: [
+      { type: 'input', text: 'OldButton という名前のコンポーネントを PrimaryButton に全ファイルで変更して' },
+      { type: 'action', text: 'OldButton を含むファイルを検索しています...' },
+      { type: 'output', text: '14ファイルで使用されていました。すべて変更します。' },
+      { type: 'success', text: '14ファイルを更新しました（インポート・使用箇所・型定義すべて）' },
     ],
   },
   {
     icon: Terminal,
-    title: 'Bashコマンド実行',
-    description: 'シェルコマンドを直接実行できます。ビルドツール、テストランナー、パッケージマネージャーなど、プロジェクトで使用するあらゆるCLIツールと連携可能です。',
-    examples: [
-      'npm install して npm run build を実行して',
-      'テストを実行して失敗したテストを修正して',
-      'Dockerコンテナをビルドして起動して',
-      'データベースのマイグレーションを実行して',
+    emoji: '⚡',
+    title: 'コマンドを自動で実行する',
+    plain: 'ターミナルに打ち込むコマンド（npm install、テスト実行、ビルドなど）を代わりに実行してくれます。コマンドが失敗しても、エラーを読んで自分で対処してくれます。',
+    scene: '「テストを書いて実行して、失敗したら修正して」と頼めば、テストを書く→実行する→失敗箇所を直す、という一連の作業を全部やってくれる。',
+    demo: [
+      { type: 'input', text: 'CartComponent のテストを書いて実行して' },
+      { type: 'action', text: 'src/components/Cart.tsx を読み込んでいます...' },
+      { type: 'success', text: 'src/__tests__/Cart.test.tsx を作成しました（8件のテスト）' },
+      { type: 'action', text: 'npm test を実行しています...' },
+      { type: 'output', text: '1件失敗しました。空のカートの表示条件が違います。修正します。' },
+      { type: 'success', text: '修正完了。8件すべてのテストが通りました ✅' },
     ],
   },
   {
     icon: GitBranch,
-    title: 'Git操作',
-    description: 'git diff、コミット作成、ブランチ操作、プルリクエスト作成まで、Gitのワークフローを自動化できます。',
-    examples: [
-      '変更内容をレビューしてコミットメッセージを書いて',
-      'feature/new-componentブランチを作成してPRを出して',
-      'このPRに変更が必要な点をレビューして',
-      'マージコンフリクトを解決して',
+    emoji: '🔀',
+    title: 'Gitの操作（コミット・PR作成）',
+    plain: 'コードの変更履歴を管理する「Git」の操作を代わりにやってくれます。変更内容を見てコミットメッセージを書いたり、GitHubにプルリクエスト（コードレビュー依頼）を出したりできます。',
+    scene: '機能追加が終わったあと、「変更内容を確認してコミットしてPR出して」と頼めば、適切なコミットメッセージを考えてGitHubにPRまで出してくれる。',
+    demo: [
+      { type: 'input', text: '今日の変更をコミットしてPRを作って' },
+      { type: 'action', text: 'git diff を確認しています...' },
+      { type: 'output', text: 'ショッピングカートの数量変更機能を追加した変更ですね。コミットします。' },
+      { type: 'success', text: 'git commit: "feat: カートの数量変更機能を追加"' },
+      { type: 'success', text: 'GitHub PR #42 を作成しました' },
     ],
   },
   {
     icon: Globe,
-    title: 'Web取得（web_fetch）',
-    description: 'URLを指定してWebページの内容を取得できます。最新のドキュメントやAPIレファレンスを参照しながら開発を進められます。',
-    examples: [
-      'React 18の公式ドキュメントを参照して実装して',
-      'このAPIのドキュメントをもとにクライアントを書いて',
-      '最新のnpmパッケージのREADMEを確認して',
+    emoji: '🌐',
+    title: 'ネットから情報を取ってくる',
+    plain: 'URLを伝えると、そのページの内容を読んで参考にしながら作業してくれます。ライブラリの最新ドキュメントを見て実装したり、APIの使い方を確認したりできます。',
+    scene: '「このライブラリのドキュメントを見てコードを書いて」とURLを渡すと、ドキュメントを読んで正しい使い方で実装してくれる。古いサンプルコードを使って間違える心配がない。',
+    demo: [
+      { type: 'input', text: 'https://docs.example.com/api を見て、APIクライアントを実装して' },
+      { type: 'action', text: 'ドキュメントを取得しています...' },
+      { type: 'output', text: 'ドキュメントを確認しました。認証はBearer tokenで、レート制限は100req/minですね。実装します。' },
+      { type: 'success', text: 'src/lib/apiClient.ts を作成しました（エラーハンドリング・型定義含む）' },
     ],
   },
   {
     icon: Layers,
-    title: '複数ファイルにまたがるタスク自動化',
-    description: 'プロジェクト全体にわたる大規模な変更を自動化できます。コンポーネントのリネーム、APIの変更、スタイルの統一など、手作業では時間がかかる作業を一括実行します。',
-    examples: [
-      'ButtonコンポーネントをPrimaryButtonに全ファイルでリネームして',
-      'REST APIをGraphQLに移行して',
-      'すべてのCSSをTailwindに書き換えて',
-      'エラーハンドリングをすべてのAPIコールに追加して',
+    emoji: '🗂️',
+    title: 'プロジェクト全体をまとめて変更',
+    plain: 'プロジェクトのすべてのファイルを把握した上で、大規模な変更をまとめてやってくれます。たとえば「REST APIをGraphQLに移行して」と頼むと、関連するすべてのファイルを自動で書き換えてくれます。',
+    scene: '「CSSをすべてTailwindに書き換えて」と頼むと、プロジェクト全体のCSSファイルを読んで、Tailwindのクラスに書き換えてくれる。何十ファイルあっても一気にやってくれる。',
+    demo: [
+      { type: 'input', text: 'スタイルをすべてTailwindに移行して' },
+      { type: 'action', text: 'CSSファイルを検索しています（23件見つかりました）...' },
+      { type: 'action', text: 'コンポーネントごとに変換しています...' },
+      { type: 'success', text: '23ファイルを変換しました。既存のデザインを維持しながら移行完了 ✅' },
     ],
   },
   {
     icon: Plug,
-    title: 'MCPサーバーとの連携',
-    description: 'Model Context Protocol（MCP）に対応したサーバーと連携することで、データベース、外部API、ファイルシステムなど多様なデータソースに直接アクセスできます。',
-    examples: [
-      'PostgreSQLからユーザーデータを取得して',
-      'GitHubのIssueを一覧表示して対応して',
-      'Slackにデプロイ完了通知を送って',
-      'ローカルファイルシステムを直接操作して',
+    emoji: '🔌',
+    title: '外部サービスと連携する（MCP）',
+    plain: 'GitHubやデータベース、Slackなど外部のサービスに直接アクセスできるようになります（MCPという仕組みを使います）。「GitHubのIssueを見て対応して」とか「データベースを確認して」とかができます。',
+    scene: 'GitHubのIssueを見ながら修正→コミット→PR作成を全部Claude Codeが自動でやってくれる。',
+    demo: [
+      { type: 'input', text: 'GitHub Issue #15 を確認して対応して' },
+      { type: 'action', text: 'GitHub Issue #15 を取得しています...' },
+      { type: 'output', text: 'Issue: 検索ボックスで日本語が入力できない。原因を調査します。' },
+      { type: 'success', text: 'src/components/Search.tsx を修正しました' },
+      { type: 'success', text: 'PR #43「fix: 検索ボックスの日本語入力対応」を作成しました' },
     ],
-    badge: '拡張性が高い',
+    badge: '便利',
   },
   {
     icon: Workflow,
-    title: 'CI/CDへの組み込み（--printフラグ）',
-    description: '--printフラグを使うことで対話なしに実行でき、GitHub ActionsなどのCI/CDパイプラインに組み込んで自動化タスクを実行できます。',
-    examples: [
-      'コードレビューの自動化',
-      'テスト失敗時の自動修正提案',
-      'リリースノートの自動生成',
-      'コードの品質チェックの自動化',
+    emoji: '🤖',
+    title: 'CI/CDに組み込んで自動化',
+    plain: 'GitHub Actionsなどの自動化ツールに組み込むことで、人間が何もしなくてもClaudeが動くようにできます。たとえば「PRが来たら自動でコードレビューしてコメントする」といったことが実現できます。',
+    scene: 'PRを出すと自動でClaudeがコードを確認して、問題点をコメントしてくれる。レビュアーが手動でチェックしなくても、明らかなミスをその場で指摘してくれる。',
+    demo: [
+      { type: 'output', text: '--- GitHub Actions が自動で起動 ---' },
+      { type: 'action', text: 'PR #44 のコードを確認しています...' },
+      { type: 'output', text: '⚠️ 2件の問題を見つけました' },
+      { type: 'output', text: '1. Line 23: SQLインジェクションの可能性があります' },
+      { type: 'output', text: '2. Line 45: エラーハンドリングが抜けています' },
+      { type: 'success', text: 'レビューコメントをPRに投稿しました' },
     ],
   },
 ]
